@@ -1,5 +1,3 @@
-Note: Apparently there is an existing tool for Java performance metrics that is callen JHawk.
-I'll rename the github project to avoid naming conflicts.
 hawkj
 =====
 
@@ -14,18 +12,21 @@ is likely to remain stable, but there is a lot of cleanup necessary and some nam
 Overview
 ========
 
-Jhawk essentially consists of two parts. On the one hand there is support for
+hawkj essentially consists of two parts. On the one hand there is support for
 parsing and creating HTTP Authorization, Server-Authorization (introduced by Hawk),
  and WWW-Authenticate headers.  On the
-other hand Jhawk provides the _Hawk_ class which is used to manage the data
+other hand hawkj provides the _HawkContext_ class which is used to manage the data
 necessary to create and validate the information contained in these headers.
 
-The Hawk class is an immutable class that provides a fluent interface that
+The HawkContext class is an immutable class that provides a fluent interface that
 is intended to guide the user through the process of assembling the
 required data in the correct way (meaning: help the user to get it right). 
 In addition it encapsulates the mechanics of creating the HMAC signature
 and the optional payload hash and provides some methods for verification
 of HMACs and payload hashes received as art of (Server-)Authorize headers.
+
+For additional information look at the [HawkContext class](https://github.com/algermissen/hawkj/blob/master/src/main/java/net/jalg/hawkj/HawkContext.java)
+
 
 Example
 =======
