@@ -15,7 +15,7 @@ import net.jalg.hawkj.HawkException;
 import org.junit.Before;
 import org.junit.Test;
 
-public class JhawkTest {
+public class AuthorizationHeaderParsingTest {
 
 	HawkContextBuilder_B b;
 	HawkContext c;
