@@ -1,4 +1,4 @@
-package net.jalg.jhawk;
+package net.jalg.hawkj;
 
 import static org.junit.Assert.*;
 

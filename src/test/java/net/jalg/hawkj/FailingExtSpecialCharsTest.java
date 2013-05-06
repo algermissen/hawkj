@@ -1,4 +1,4 @@
-package net.jalg.jhawk;
+package net.jalg.hawkj;
 
 import net.jalg.hawkj.Algorithm;
 import net.jalg.hawkj.HawkContext;
