@@ -45,7 +45,7 @@ public class AuthDirectiveParser {
 		for (String kv : parts[1].split(",")) {
 			String[] kva = kv.trim().split("=", 2);
 			if (!(kva.length == 2)) {
-				throw new AuthHeaderParsingException("Unable to split in " + headerValue);
+				throw new AuthHeaderParsingException("Unable to split " + kv + " into parameter key and value in " + headerValue);
 			}
 			if (kva[1].startsWith("\"")) {
 				kva[1] = kva[1].substring(1, kva[1].length() - 1);

@@ -31,6 +31,9 @@ public class AuthorizationHeader {
 	public String getNonce() {
 		return nonce;
 	}
+	public String getExt() {
+		return ext;
+	}
 
 	public String toString() {
 		// FIXME: needs major overhaul
@@ -76,7 +79,8 @@ public class AuthorizationHeader {
 			if (!first) {
 				sb.append(",");
 			}
-			sb.append("ext=\"").append(ext).append("\"");
+			String escaped = ext.replace("\"", "\\\"");
+			sb.append("ext=\"").append(escaped).append("\"");
 			first = false;
 		}
 		return sb.toString();

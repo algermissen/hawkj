@@ -3,6 +3,7 @@ package net.jalg.hawkj;
 
 /** Builder implementation for WWW-Authenticate headers.
  * 
+ * This lacks support for tsm parameter.
  * 
  * @author Jan Algermissen, http://jalg.net
  *
