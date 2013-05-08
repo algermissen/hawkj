@@ -37,7 +37,7 @@ public class WwwAuthenticateHeaderGenerationTest {
 		
 		HawkWwwAuthenticateContext k = HawkWwwAuthenticateContext.tsAndTsm(h.getTs(), h.getTsm()).credentials("someId", "someKey", Algorithm.SHA_256).build();
 		WwwAuthenticateHeader h2 = k.createWwwAuthenticateHeader();
-		assertTrue(j.isValidMac(h2.getTsm()));
+		assertTrue(j.isValidTimestampMac(h2.getTsm()));
 	}
 	
 	@Test
@@ -45,7 +45,7 @@ public class WwwAuthenticateHeaderGenerationTest {
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		HawkWwwAuthenticateContext j = HawkWwwAuthenticateContext.ts().credentials("someId", "someKey", Algorithm.SHA_256).build();
 		WwwAuthenticateHeader h = j.createWwwAuthenticateHeader();
-		assertFalse(j.isValidMac("ahjghfjwgefj"));
+		assertFalse(j.isValidTimestampMac("ahjghfjwgefj"));
 	}
 //	
 //	@Test

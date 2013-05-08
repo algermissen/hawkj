@@ -165,7 +165,7 @@ public class HawkContext {
 	 * 
 	 * The method returns a new AuthorizationHeader instance from the data in
 	 * this HawkContext. For this the HMAC of the contained data is calculated
-	 * and put into the header with the other parameters required bu the
+	 * and put into the header with the other parameters required by the
 	 * specification.
 	 * 
 	 * 
@@ -219,7 +219,7 @@ public class HawkContext {
 	 * 
 	 * @param hmac
 	 *            The HMAC value to test.
-	 * @return true if the HMAC matches the HMAC computed for this Jhawk, false
+	 * @return true if the HMAC matches the HMAC computed for this context, false
 	 *         otherwise.
 	 * @throws HawkException
 	 */
@@ -232,7 +232,7 @@ public class HawkContext {
 	public String toString() {
 		return "Hawk [method=" + method + ", path=" + path + ", host=" + host
 				+ ", port=" + port + ", ts=" + ts + ", nonce=" + nonce
-				+ ", id=" + id + ", key=" + key + ", algorithm=" + algorithm
+				+ ", id=" + id + ", key=xxxx, algorithm=" + algorithm
 				+ ", hash=" + hash + ", ext=" + ext + "]";
 	}
 

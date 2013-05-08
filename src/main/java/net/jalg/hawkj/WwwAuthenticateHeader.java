@@ -8,6 +8,10 @@ package net.jalg.hawkj;
  */
 public class WwwAuthenticateHeader {
 
+	private static final char BLANK = ' '; 
+	private static final char COMMA = ','; 
+	private static final String ESCDQUOTE = "\""; 
+	
 //	private String realm;
 //	private HawkError error;
 	private int ts;
@@ -36,23 +40,22 @@ public class WwwAuthenticateHeader {
 	public String toString() {
 		//FIXME  beware " escaping
 		StringBuilder sb = new StringBuilder(HawkContext.SCHEME);
-		char delim = ' ';
+		char delim = BLANK;
 //		if (realm != null) {
-//			sb.append(delim).append("realm=\"").append(realm).append("\"");
-//			delim = ',';
-//			first = false;
+//			sb.append(delim).append("realm=\"").append(realm).append(ESCDQUOTE);
+//			delim = COMMA;
 //		}
 		if (ts != 0) {
-			sb.append(delim).append("ts=\"").append(ts).append("\"");
-			delim = ',';
+			sb.append(delim).append("ts=\"").append(ts).append(ESCDQUOTE);
+			delim = COMMA;
 		}
 		if (tsm != null) {
-			sb.append(delim).append("tsm=\"").append(tsm).append("\"");
-			delim = ',';
+			sb.append(delim).append("tsm=\"").append(tsm).append(ESCDQUOTE);
+			delim = COMMA;
 		}
 //		if (error != null) {
-//			sb.append(delim).append("error=\"").append(error).append("\"");
-//			delim = ',';
+//			sb.append(delim).append("error=\"").append(error).append(ESCDQUOTE);
+//			delim = COMMA;
 //		}
 		// FIXME: extension elements?
 		return sb.toString();

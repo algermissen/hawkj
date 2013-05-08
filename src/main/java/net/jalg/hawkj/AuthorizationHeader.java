@@ -1,11 +1,16 @@
 package net.jalg.hawkj;
 
-/** Builder implementation for Authorization headers.
+/**
+ * Builder implementation for Authorization headers.
  * 
  * @author Jan Algermissen, http://jalg.net
- *
+ * 
  */
 public class AuthorizationHeader {
+
+	private static final char BLANK = ' ';
+	private static final char COMMA = ',';
+	private static final String ESCDQUOTE = "\"";
 
 	private String id;
 	private String mac;
@@ -13,7 +18,7 @@ public class AuthorizationHeader {
 	private String nonce;
 	private int ts;
 	private String ext;
-	
+
 	private AuthorizationHeader() {
 	}
 
@@ -28,68 +33,50 @@ public class AuthorizationHeader {
 	public String getHash() {
 		return hash;
 	}
+
 	public int getTs() {
 		return ts;
 	}
+
 	public String getNonce() {
 		return nonce;
 	}
+
 	public String getExt() {
 		return ext;
 	}
 
 	public String toString() {
-		// FIXME: needs major overhaul
 		// beware " escaping
-		StringBuilder sb = new StringBuilder(HawkContext.SCHEME).append(" ");
-		boolean first = true;
+		StringBuilder sb = new StringBuilder(HawkContext.SCHEME);
+		char delim = BLANK;
 		if (id != null) {
-			if (!first) {
-				sb.append(",");
-			}
-			sb.append("id=\"").append(id).append("\"");
-			first = false;
+			sb.append(delim).append("id=\"").append(id).append(ESCDQUOTE);
+			delim = COMMA;
 		}
 		if (mac != null) {
-			if (!first) {
-				sb.append(",");
-			}
-			sb.append("mac=\"").append(mac).append("\"");
-			first = false;
+			sb.append(delim).append("mac=\"").append(mac).append(ESCDQUOTE);
+			delim = COMMA;
 		}
 		if (hash != null) {
-			if (!first) {
-				sb.append(",");
-			}
-			sb.append("hash=\"").append(hash).append("\"");
-			first = false;
+			sb.append(delim).append("hash=\"").append(hash).append(ESCDQUOTE);
+			delim = COMMA;
 		}
 		if (ts != 0) {
-			if (!first) {
-				sb.append(",");
-			}
-			sb.append("ts=\"").append(ts).append("\"");
-			first = false;
+			sb.append(delim).append("ts=\"").append(ts).append(ESCDQUOTE);
+			delim = COMMA;
 		}
 		if (nonce != null) {
-			if (!first) {
-				sb.append(",");
-			}
-			sb.append("nonce=\"").append(nonce).append("\"");
-			first = false;
+			sb.append(delim).append("nonce=\"").append(nonce).append(ESCDQUOTE);
+			delim = COMMA;
 		}
 		if (ext != null) {
-			if (!first) {
-				sb.append(",");
-			}
-			String escaped = ext.replace("\"", "\\\"");
-			sb.append("ext=\"").append(escaped).append("\"");
-			first = false;
+			String escaped = ext.replace(ESCDQUOTE, "\\\"");
+			sb.append(delim).append("ext=\"").append(escaped).append(ESCDQUOTE);
+			delim = COMMA;
 		}
 		return sb.toString();
 	}
-
-	
 
 	public static AuthorizationBuilder authorization() {
 		return new AuthorizationBuilder();
@@ -160,16 +147,17 @@ public class AuthorizationHeader {
 		@Override
 		public void scheme(String scheme) throws AuthHeaderParsingException {
 			if (!HawkContext.SCHEME.equalsIgnoreCase(scheme)) {
-				throw new AuthHeaderParsingException("Wrong scheme name " + scheme);
+				throw new AuthHeaderParsingException("Wrong scheme name "
+						+ scheme);
 			}
 		}
-		
 
 		@Override
 		public void param(String key, String value)
 				throws AuthHeaderParsingException {
-			if(value == null) {
-				throw new AuthHeaderParsingException("value is null for key: " + key);
+			if (value == null) {
+				throw new AuthHeaderParsingException("value is null for key: "
+						+ key);
 			}
 			// check null
 			key = key.toLowerCase();
@@ -182,8 +170,9 @@ public class AuthorizationHeader {
 			} else if (key.equals("ts")) {
 				try {
 					ts(Integer.parseInt(value));
-				} catch(NumberFormatException e) {
-					throw new AuthHeaderParsingException(value + " is not an integer value",e);
+				} catch (NumberFormatException e) {
+					throw new AuthHeaderParsingException(value
+							+ " is not an integer value", e);
 				}
 			} else if (key.equals("nonce")) {
 				nonce(value);
@@ -197,7 +186,8 @@ public class AuthorizationHeader {
 
 		@Override
 		public void token(String token) throws AuthHeaderParsingException {
-			throw new AuthHeaderParsingException("Token field not supported by Hawk authentication scheme");
+			throw new AuthHeaderParsingException(
+					"Token field not supported by Hawk authentication scheme");
 		}
 
 	}
