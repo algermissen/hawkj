@@ -16,13 +16,37 @@ public class WwwAuthenticateHeaderGenerationTest {
 	
 	// FIXME: implement with implementation of cut.
 
-//	@Test
-//	public void testHeaderGeneration() throws HawkException {
-//		HawkContext j = HawkContext.request("GET", "/foo", "example.com", 80).
-//		credentials("someId", "someKey", Algorithm.SHA_256).tsAndNonce(1,"abc").build();
-//		AuthorizationHeader h = j.createAuthorizationHeader();
-//		assertEquals("Hawk id=\"someId\",mac=\"2D320BF8A5948601F9FA3FBA4800C8F7A1D203A317945330854D65228864468D\",ts=\"1\",nonce=\"abc\"", h.toString());
-//	}
+	@Test
+	public void testHeaderGeneration() throws HawkException {
+		HawkWwwAuthenticateContext j = HawkWwwAuthenticateContext.tsAndTsm(1, "abcdefghij").credentials("someId", "someKey", Algorithm.SHA_256).build();
+		WwwAuthenticateHeader h = j.createWwwAuthenticateHeader();
+		assertEquals("Hawk ts=\"1\",tsm=\"abcdefghij\"", h.toString());
+	}
+	@Test
+	public void testHeaderGeneration2() throws HawkException {
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		HawkWwwAuthenticateContext j = HawkWwwAuthenticateContext.ts().credentials("someId", "someKey", Algorithm.SHA_256).build();
+		WwwAuthenticateHeader h = j.createWwwAuthenticateHeader();
+		assertTrue(h.getTs() >= now);
+	}
+	
+	@Test
+	public void testHeaderGenerationValidHmac() throws HawkException {
+		HawkWwwAuthenticateContext j = HawkWwwAuthenticateContext.ts().credentials("someId", "someKey", Algorithm.SHA_256).build();
+		WwwAuthenticateHeader h = j.createWwwAuthenticateHeader();
+		
+		HawkWwwAuthenticateContext k = HawkWwwAuthenticateContext.tsAndTsm(h.getTs(), h.getTsm()).credentials("someId", "someKey", Algorithm.SHA_256).build();
+		WwwAuthenticateHeader h2 = k.createWwwAuthenticateHeader();
+		assertTrue(j.isValidMac(h2.getTsm()));
+	}
+	
+	@Test
+	public void testHeaderGenerationWrongMacNotValidHmac() throws HawkException {
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		HawkWwwAuthenticateContext j = HawkWwwAuthenticateContext.ts().credentials("someId", "someKey", Algorithm.SHA_256).build();
+		WwwAuthenticateHeader h = j.createWwwAuthenticateHeader();
+		assertFalse(j.isValidMac("ahjghfjwgefj"));
+	}
 //	
 //	@Test
 //	public void testHeaderGenerationWithExtData() throws HawkException {

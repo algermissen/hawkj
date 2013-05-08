@@ -13,6 +13,9 @@ public class AuthorizationHeader {
 	private String nonce;
 	private int ts;
 	private String ext;
+	
+	private AuthorizationHeader() {
+	}
 
 	public String getId() {
 		return id;
@@ -86,8 +89,7 @@ public class AuthorizationHeader {
 		return sb.toString();
 	}
 
-	private AuthorizationHeader() {
-	}
+	
 
 	public static AuthorizationBuilder authorization() {
 		return new AuthorizationBuilder();
@@ -115,7 +117,6 @@ public class AuthorizationHeader {
 
 		public AuthorizationHeader build() {
 			AuthorizationHeader instance = new AuthorizationHeader();
-			//instance.name = AUTHORIZATION;
 			instance.id = id;
 			instance.hash = hash;
 			instance.mac = mac;
@@ -179,7 +180,11 @@ public class AuthorizationHeader {
 			} else if (key.equals("hash")) {
 				hash(value);
 			} else if (key.equals("ts")) {
-				ts(Integer.parseInt(value));
+				try {
+					ts(Integer.parseInt(value));
+				} catch(NumberFormatException e) {
+					throw new AuthHeaderParsingException(value + " is not an integer value",e);
+				}
 			} else if (key.equals("nonce")) {
 				nonce(value);
 			} else if (key.equals("ext")) {

@@ -34,11 +34,15 @@ public class AuthDirectiveParser {
 	public void parse() throws AuthHeaderParsingException {
 
 		String[] parts = headerValue.trim().split("\\s+", 2);
-		if (parts.length != 2) {
+		if (parts.length < 1) {
 			throw new AuthHeaderParsingException("Unable to split scheme and other part in " + headerValue);
 		}
 
 		builder.scheme(parts[0]);
+		
+		if(parts.length == 1) {
+			return;
+		}
 		
 		// FIXME: handle optional, one-time token
 

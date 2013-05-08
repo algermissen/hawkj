@@ -395,6 +395,8 @@ public class HawkContext {
 
 		private Algorithm algorithm;
 		private String contentType;
+		
+		private HawkContextBuilder() { }
 
 		private HawkContextBuilder method(String method) {
 			if (method == null || method.length() == 0) {
