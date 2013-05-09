@@ -501,7 +501,8 @@ public class HawkContext {
 				throw new IllegalArgumentException(
 						"Body must not be null or empty");
 			}
-			if (contentType == null || contentType.length() == 0) {
+			// empty content type is ok according to Hawk.
+			if (contentType == null) { 
 				throw new IllegalArgumentException(
 						"Content type must not be null or empty");
 			}
@@ -625,7 +626,7 @@ public class HawkContext {
 						"Body must not be null or empty");
 			}
 
-			if (contentType == null || contentType.equals("")) {
+			if (contentType == null) {
 				throw new IllegalArgumentException(
 						"Content type must not be null or empty");
 			}
@@ -642,6 +643,7 @@ public class HawkContext {
 			try {
 				MessageDigest md = MessageDigest.getInstance(algorithm
 						.getMessageDigestName());
+				
 				md.update(baseString.getBytes(StandardCharsets.UTF_8));
 				md.update(body);
 				md.update(BLF);

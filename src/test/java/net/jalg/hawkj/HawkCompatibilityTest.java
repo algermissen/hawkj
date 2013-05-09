@@ -8,6 +8,7 @@ import net.jalg.hawkj.Algorithm;
 import net.jalg.hawkj.AuthorizationHeader;
 import net.jalg.hawkj.HawkContext;
 import net.jalg.hawkj.HawkException;
+import net.jalg.hawkj.util.Base64;
 
 import org.junit.Test;
 
@@ -36,9 +37,13 @@ public class HawkCompatibilityTest {
 	
 	/** Adaption of the test 'should return a valid authorization header (sha1)'
 	 * from https://github.com/hueniverse/hawk/blob/master/test/client.js
+	 * <p>
+	 * FIXME: This test fails - currently, I have no idea why.
 	 * @throws HawkException
+	 * 
 	 */
-	//@Test
+
+	@Test
 	public void testShouldReturnAValidAuthorizationHeaderSha1() throws HawkException {
 		HawkContext j = HawkContext
 				.request("POST", "/somewhere/over/the/rainbow", "example.net",
@@ -47,11 +52,10 @@ public class HawkCompatibilityTest {
 				.tsAndNonce(1353809207, "Ygvqdz")
 				.body("something to write about"
 						.getBytes(StandardCharsets.UTF_8),
-						"text/plain").ext("Bazinga!").build();
+						"").ext("Bazinga!").build();
 		AuthorizationHeader h = j.createAuthorizationHeader();
-		System.out.println(">" + h.toString() + "<");
 		assertEquals(
-				"Hawk id=\"123456\",mac=\"qbf1ZPG/r/e06F4ht+T77LXi5vw=\",hash=\"bsvY3IfUllw6V5rvk4tStEvpBhE==\",ts=\"1353809207\",nonce=\"Ygvqdz\",ext=\"Bazinga!\"",
+				"Hawk id=\"123456\",mac=\"qbf1ZPG/r/e06F4ht+T77LXi5vw=\",hash=\"bsvY3IfUllw6V5rvk4tStEvpBhE=\",ts=\"1353809207\",nonce=\"Ygvqdz\",ext=\"Bazinga!\"",
 				h.toString());
 	}
 	
@@ -72,7 +76,6 @@ public class HawkCompatibilityTest {
 						.getBytes(StandardCharsets.UTF_8),
 						"text/plain").ext("Bazinga!").build();
 		AuthorizationHeader h = j.createAuthorizationHeader();
-		System.out.println(">" + h.toString() + "<");
 		assertEquals(
 				"Hawk id=\"123456\",mac=\"q1CwFoSHzPZSkbIvl0oYlD+91rBUEvFk763nMjMndj8=\",hash=\"2QfCt3GuY9HQnHWyWD3wX68ZOKbynqlfYmuO2ZBRqtY=\",ts=\"1353809207\",nonce=\"Ygvqdz\",ext=\"Bazinga!\"",
 				h.toString());
@@ -94,7 +97,6 @@ public class HawkCompatibilityTest {
 						.getBytes(StandardCharsets.UTF_8),
 						"text/plain").build();
 		AuthorizationHeader h = j.createAuthorizationHeader();
-		System.out.println(">" + h.toString() + "<");
 		assertEquals(
 				"Hawk id=\"123456\",mac=\"HTgtd0jPI6E4izx8e4OHdO36q00xFCU0FolNq3RiCYs=\",hash=\"2QfCt3GuY9HQnHWyWD3wX68ZOKbynqlfYmuO2ZBRqtY=\",ts=\"1353809207\",nonce=\"Ygvqdz\"",
 				h.toString());

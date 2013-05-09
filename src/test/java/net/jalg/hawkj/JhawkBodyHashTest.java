@@ -57,10 +57,6 @@ public class JhawkBodyHashTest {
 		HawkContextBuilder.generateHash(Algorithm.SHA_256,new byte[] { 'a','b','c'} ,null);
 	}
 	
-	@Test(expected = IllegalArgumentException.class)
-	public void testEmptyMediaTypeThrowsException() throws HawkException {
-		HawkContextBuilder.generateHash(Algorithm.SHA_256,new byte[] { 'a','b','c'} ,"");
-	}
 	
 	
 
