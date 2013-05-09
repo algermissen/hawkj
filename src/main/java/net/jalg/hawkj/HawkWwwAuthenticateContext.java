@@ -198,19 +198,13 @@ public class HawkWwwAuthenticateContext {
 			throw new HawkException("Key is invalid ", e);
 		}
 
-		// FIXME: Why does Hawk use base64 for this HMAC but hex for the other
-		// context?
-		// String hmac = Util.bytesToHex( mac.doFinal(baseString
-		// .getBytes(StandardCharsets.UTF_8)));
-
-		String hmac = Base64.encodeBase64String(mac.doFinal(baseString
-				.getBytes(StandardCharsets.UTF_8)));
-		return hmac;
+		return new String(Base64.encodeBase64(mac.doFinal(baseString
+				.getBytes(StandardCharsets.UTF_8))), StandardCharsets.UTF_8);
 	}
 
 	/**
 	 * Create a new HawkWwwAuthenticateContextBuilder_A, initialized with
-	 * timestamp and timestamp hamc.
+	 * timestamp and timestamp hmac.
 	 * 
 	 * @param ts
 	 *            The timestamp
@@ -232,11 +226,6 @@ public class HawkWwwAuthenticateContext {
 		public HawkWwwAuthenticateContextBuilder credentials(String id,
 				String key, Algorithm algorithm);
 	}
-
-	// public static interface HawkWwwAuthenticateContextBuilder_B {
-	// public HawkContextBuilder_B credentials(String id, String key,
-	// Algorithm algorithm);
-	// }
 
 	/**
 	 * @author Jan Algermissen, http://jalg.net
@@ -302,20 +291,33 @@ public class HawkWwwAuthenticateContext {
 
 		public HawkWwwAuthenticateContext build() throws HawkException {
 
+			/*
+			 * If this is a builder for/from a header that has a ts-parameter...
+			 * (tsm can be set (when parsed from header) or null, in which case
+			 * it will be generated when a header is built from us.
+			 */
 			if (this.ts != 0) {
+				/*
+				 * Since we do mac-ing of the timestamp, when generating for
+				 * header or when validating from header with us, we need
+				 * credentials in the context.
+				 */
 				if (this.id == null || this.key == null
 						|| this.algorithm == null) {
 					throw new IllegalStateException();
 				}
-
+				/*
+				 * Create a new context for WWW-Authenticate headers that
+				 * communicate a current timestamp to the client.
+				 */
 				return new HawkWwwAuthenticateContext(this.ts, this.tsm,
 						this.id, this.key, this.algorithm);
 
 			}
 
 			/*
-			 * Sometimes we do have an empty builder, because 'Hawk' is a valid
-			 * WWW-Authenticate header value for Hawk 401 responses.
+			 * Sometimes we do have an empty builder, because just 'Hawk' is a
+			 * valid WWW-Authenticate header value for Hawk 401 responses.
 			 */
 			return new HawkWwwAuthenticateContext();
 		}

@@ -65,7 +65,7 @@ public class HawkContext {
 	public static final String SCHEME = "Hawk";
 	public static final String SERVER_AUTHORIZATION = "Server-Authorization";
 
-	//private static final String BODY_HASH_ALGORITHM = "SHA-1";
+	// private static final String BODY_HASH_ALGORITHM = "SHA-1";
 	private static final String SLF = "\n"; // String-LineFeed
 	private static final byte[] BLF = { '\n' }; // Byte-LineFeed
 
@@ -219,8 +219,8 @@ public class HawkContext {
 	 * 
 	 * @param hmac
 	 *            The HMAC value to test.
-	 * @return true if the HMAC matches the HMAC computed for this context, false
-	 *         otherwise.
+	 * @return true if the HMAC matches the HMAC computed for this context,
+	 *         false otherwise.
 	 * @throws HawkException
 	 */
 	public boolean isValidMac(String hmac) throws HawkException {
@@ -276,9 +276,6 @@ public class HawkContext {
 	private String generateHmac() throws HawkException {
 
 		String baseString = getBaseString();
-		// FIXME: remove after initial debugging
-		System.out.println("===========================\n" + baseString
-				+ "============================\n");
 
 		Mac mac;
 		try {
@@ -290,23 +287,15 @@ public class HawkContext {
 
 		SecretKeySpec secretKey = new SecretKeySpec(getKey().getBytes(
 				StandardCharsets.UTF_8), getAlgorithm().getMacName());
-		
+
 		try {
 			mac.init(secretKey);
 		} catch (InvalidKeyException e) {
 			throw new HawkException("Key is invalid ", e);
 		}
-		
-		byte[] k = mac.doFinal(baseString.getBytes(StandardCharsets.UTF_8));
-		
 
-		byte[] x = Base64.encodeBase64(k);
-		System.out.println(new String(x));
-		
-		System.out.println(new String(x, StandardCharsets.UTF_8));
-		
-		return new String(x,StandardCharsets.UTF_8);
-		
+		return new String(Base64.encodeBase64(mac.doFinal(baseString
+				.getBytes(StandardCharsets.UTF_8))), StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -403,8 +392,9 @@ public class HawkContext {
 
 		private Algorithm algorithm;
 		private String contentType;
-		
-		private HawkContextBuilder() { }
+
+		private HawkContextBuilder() {
+		}
 
 		private HawkContextBuilder method(String method) {
 			if (method == null || method.length() == 0) {
@@ -478,30 +468,42 @@ public class HawkContext {
 			return this;
 		}
 
-		/* (non-Javadoc)
-		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_A#credentials(java.lang.String, java.lang.String, net.jalg.hawkj.Algorithm)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * net.jalg.hawkj.HawkContext.HawkContextBuilder_A#credentials(java.
+		 * lang.String, java.lang.String, net.jalg.hawkj.Algorithm)
 		 */
 		public HawkContextBuilder_B credentials(String id, String key,
 				Algorithm algorithm) {
 			return id(id).key(key).algorithm(algorithm);
 		}
 
-		/* (non-Javadoc)
-		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#tsAndNonce(int, java.lang.String)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#tsAndNonce(int,
+		 * java.lang.String)
 		 */
 		public HawkContextBuilder_C tsAndNonce(int ts, String nonce) {
 			return ts(ts).nonce(nonce);
 		}
 
-		/* (non-Javadoc)
-		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#body(byte[], java.lang.String)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#body(byte[],
+		 * java.lang.String)
 		 */
 		public HawkContextBuilder_C body(byte[] body, String contentType) {
 			if (body == null || body.length == 0) {
-				throw new IllegalArgumentException("Body must not be null or empty");
+				throw new IllegalArgumentException(
+						"Body must not be null or empty");
 			}
 			if (contentType == null || contentType.length() == 0) {
-				throw new IllegalArgumentException("Content type must not be null or empty");
+				throw new IllegalArgumentException(
+						"Content type must not be null or empty");
 			}
 			this.body = body;
 			this.contentType = contentType;
@@ -510,8 +512,12 @@ public class HawkContext {
 
 		// FIXME: Document that null or empty is allowed but has no effect
 		// in order to avoid interrupting fluid interface with 'if's
-		/* (non-Javadoc)
-		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#hash(java.lang.String)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * net.jalg.hawkj.HawkContext.HawkContextBuilder_B#hash(java.lang.String
+		 * )
 		 */
 		public HawkContextBuilder_C hash(String hash) {
 			if (hash != null && hash.length() > 0) {
@@ -522,8 +528,11 @@ public class HawkContext {
 
 		// FIXME: Document that null or empty is allowed but has no effect
 		// in order to avoid interrupting fluid interface with 'if's
-		/* (non-Javadoc)
-		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#ext(java.lang.String)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * net.jalg.hawkj.HawkContext.HawkContextBuilder_B#ext(java.lang.String)
 		 */
 		public HawkContextBuilder_C ext(String ext) {
 			if (ext == null || ext.length() == 0) {
@@ -556,25 +565,39 @@ public class HawkContext {
 			String nonce = null;
 			String hash = null;
 
+			/*
+			 * If ts has not been provided it means that we should generate a
+			 * new timestamp.
+			 */
 			if (this.ts == 0) {
 				ts = (int) (System.currentTimeMillis() / 1000);
 			} else {
 				ts = this.ts;
 			}
 
+			/*
+			 * If nonce has not been provided it means that we should generate a
+			 * new nonce.
+			 */
 			if (this.nonce == null) {
-				nonce = Util.generateRandomString(6); // FIXME: Why 6?
+				nonce = Util.generateRandomString(6); // FIXME: Why 6? results
+														// in 12 due to
+														// bytesToHex. FIXME!
 			} else {
 				nonce = this.nonce;
 			}
 
+			/*
+			 * Handle body and alternatively hash values. Generate hash if have
+			 * body.
+			 */
 			if (this.body != null && this.body.length > 0) {
 				if (this.hash != null) {
 					throw new IllegalStateException(
 							"Cannot have body and hash, only either one");
 				}
-				hash = HawkContextBuilder.generateHash(this.algorithm,this.body,
-						this.contentType);
+				hash = HawkContextBuilder.generateHash(this.algorithm,
+						this.body, this.contentType);
 			} else {
 				if (!(this.hash == null || this.hash.trim().equals(""))) {
 					hash = this.hash;
@@ -594,38 +617,41 @@ public class HawkContext {
 		 * @return
 		 * @throws HawkException
 		 */
-		public static String generateHash(Algorithm algorithm , byte[] body, String contentType)
-				throws HawkException {
-			
+		public static String generateHash(Algorithm algorithm, byte[] body,
+				String contentType) throws HawkException {
+
 			if (body == null || body.length == 0) {
-				throw new IllegalArgumentException("Body must not be null or empty");
+				throw new IllegalArgumentException(
+						"Body must not be null or empty");
 			}
 
 			if (contentType == null || contentType.equals("")) {
-				throw new IllegalArgumentException("Content type must not be null or empty");
+				throw new IllegalArgumentException(
+						"Content type must not be null or empty");
 			}
-			String ct = contentType.split(";")[0].trim(); // FIXME: limit 2?
+			/*
+			 * Strip any parameters from media type. (If we have no match, first
+			 * element will be original) E.g. from 'application/atom;type=feed'
+			 * make 'application/atom'.
+			 */
+			String ct = contentType.split(";")[0].trim();
 
 			String baseString = new StringBuilder(HAWK_PAYLOAD_PREFIX)
 					.append(SLF).append(ct).append(SLF).toString();
 
-			// FIXME: remove after initial debugging
-			System.out.println("===========================\n" + baseString
-					+ "\n============================");
-
-			MessageDigest md = null;
 			try {
-				md = MessageDigest.getInstance(algorithm.getMessageDigestName());
+				MessageDigest md = MessageDigest.getInstance(algorithm
+						.getMessageDigestName());
+				md.update(baseString.getBytes(StandardCharsets.UTF_8));
+				md.update(body);
+				md.update(BLF);
+				return new String(Base64.encodeBase64(md.digest()),
+						StandardCharsets.UTF_8);
 			} catch (NoSuchAlgorithmException e1) {
 				throw new HawkException("Digest algorithm "
 						+ algorithm.getMessageDigestName() + " not found", e1);
 			}
 
-			md.update(baseString.getBytes(StandardCharsets.UTF_8));
-			md.update(body);
-			md.update(BLF);
-			byte[] digest = md.digest();
-			return Base64.encodeBase64String(digest);
 		}
 
 	}
