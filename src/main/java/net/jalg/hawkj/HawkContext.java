@@ -65,7 +65,7 @@ public class HawkContext {
 	public static final String SCHEME = "Hawk";
 	public static final String SERVER_AUTHORIZATION = "Server-Authorization";
 
-	private static final String BODY_HASH_ALGORITHM = "SHA-256";
+	//private static final String BODY_HASH_ALGORITHM = "SHA-1";
 	private static final String SLF = "\n"; // String-LineFeed
 	private static final byte[] BLF = { '\n' }; // Byte-LineFeed
 
@@ -241,7 +241,7 @@ public class HawkContext {
 	 * 
 	 * @return
 	 */
-	private String getBaseString() {
+	protected String getBaseString() {
 		StringBuilder sb = new StringBuilder(HAWK_HEADER_PREFIX).append(SLF);
 		sb.append(getTs()).append(SLF);
 		sb.append(getNonce()).append(SLF);
@@ -278,27 +278,35 @@ public class HawkContext {
 		String baseString = getBaseString();
 		// FIXME: remove after initial debugging
 		System.out.println("===========================\n" + baseString
-				+ "\n============================");
+				+ "============================\n");
 
 		Mac mac;
 		try {
-			mac = Mac.getInstance(getAlgorithm().getName());
+			mac = Mac.getInstance(getAlgorithm().getMacName());
 		} catch (NoSuchAlgorithmException e) {
 			throw new HawkException("Unknown algorithm "
-					+ getAlgorithm().getName(), e);
+					+ getAlgorithm().getMacName(), e);
 		}
 
-		SecretKeySpec secret_key = new SecretKeySpec(getKey().getBytes(
-				StandardCharsets.UTF_8), getAlgorithm().getName());
+		SecretKeySpec secretKey = new SecretKeySpec(getKey().getBytes(
+				StandardCharsets.UTF_8), getAlgorithm().getMacName());
+		
 		try {
-			mac.init(secret_key);
+			mac.init(secretKey);
 		} catch (InvalidKeyException e) {
 			throw new HawkException("Key is invalid ", e);
 		}
+		
+		byte[] k = mac.doFinal(baseString.getBytes(StandardCharsets.UTF_8));
+		
 
-		String hmac = Util.bytesToHex(mac.doFinal(baseString
-				.getBytes(StandardCharsets.UTF_8)));
-		return hmac;
+		byte[] x = Base64.encodeBase64(k);
+		System.out.println(new String(x));
+		
+		System.out.println(new String(x, StandardCharsets.UTF_8));
+		
+		return new String(x,StandardCharsets.UTF_8);
+		
 	}
 
 	/**
@@ -565,7 +573,7 @@ public class HawkContext {
 					throw new IllegalStateException(
 							"Cannot have body and hash, only either one");
 				}
-				hash = HawkContextBuilder.generateHash(this.body,
+				hash = HawkContextBuilder.generateHash(this.algorithm,this.body,
 						this.contentType);
 			} else {
 				if (!(this.hash == null || this.hash.trim().equals(""))) {
@@ -586,7 +594,7 @@ public class HawkContext {
 		 * @return
 		 * @throws HawkException
 		 */
-		public static String generateHash(byte[] body, String contentType)
+		public static String generateHash(Algorithm algorithm , byte[] body, String contentType)
 				throws HawkException {
 			
 			if (body == null || body.length == 0) {
@@ -607,10 +615,10 @@ public class HawkContext {
 
 			MessageDigest md = null;
 			try {
-				md = MessageDigest.getInstance(BODY_HASH_ALGORITHM);
+				md = MessageDigest.getInstance(algorithm.getMessageDigestName());
 			} catch (NoSuchAlgorithmException e1) {
 				throw new HawkException("Digest algorithm "
-						+ BODY_HASH_ALGORITHM + " not found", e1);
+						+ algorithm.getMessageDigestName() + " not found", e1);
 			}
 
 			md.update(baseString.getBytes(StandardCharsets.UTF_8));

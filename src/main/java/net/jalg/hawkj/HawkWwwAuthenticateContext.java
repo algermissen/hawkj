@@ -184,14 +184,14 @@ public class HawkWwwAuthenticateContext {
 
 		Mac mac;
 		try {
-			mac = Mac.getInstance(getAlgorithm().getName());
+			mac = Mac.getInstance(getAlgorithm().getMacName());
 		} catch (NoSuchAlgorithmException e) {
 			throw new HawkException("Unknown algorithm "
-					+ getAlgorithm().getName(), e);
+					+ getAlgorithm().getMacName(), e);
 		}
 
 		SecretKeySpec secret_key = new SecretKeySpec(getKey().getBytes(
-				StandardCharsets.UTF_8), getAlgorithm().getName());
+				StandardCharsets.UTF_8), getAlgorithm().getMacName());
 		try {
 			mac.init(secret_key);
 		} catch (InvalidKeyException e) {

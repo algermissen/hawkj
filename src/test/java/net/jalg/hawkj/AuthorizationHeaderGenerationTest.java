@@ -19,7 +19,7 @@ public class AuthorizationHeaderGenerationTest {
 		HawkContext j = HawkContext.request("GET", "/foo", "example.com", 80).
 		credentials("someId", "someKey", Algorithm.SHA_256).tsAndNonce(1,"abc").build();
 		AuthorizationHeader h = j.createAuthorizationHeader();
-		assertEquals("Hawk id=\"someId\",mac=\"2D320BF8A5948601F9FA3FBA4800C8F7A1D203A317945330854D65228864468D\",ts=\"1\",nonce=\"abc\"", h.toString());
+		assertEquals("Hawk id=\"someId\",mac=\"LTIL+KWUhgH5+j+6SADI96HSA6MXlFMwhU1lIohkRo0=\",ts=\"1\",nonce=\"abc\"", h.toString());
 	}
 	
 	@Test
@@ -27,7 +27,7 @@ public class AuthorizationHeaderGenerationTest {
 		HawkContext j = HawkContext.request("GET", "/foo", "example.com", 80).
 		credentials("someId", "someKey", Algorithm.SHA_256).tsAndNonce(1,"abc").ext("some-ext-app-data").build();
 		AuthorizationHeader h = j.createAuthorizationHeader();
-		assertEquals("Hawk id=\"someId\",mac=\"A3A8C89067098581495ACB394F9149487B3B1890365A3510FCB1193A752FFC51\",ts=\"1\",nonce=\"abc\",ext=\"some-ext-app-data\"", h.toString());
+		assertEquals("Hawk id=\"someId\",mac=\"o6jIkGcJhYFJWss5T5FJSHs7GJA2WjUQ/LEZOnUv/FE=\",ts=\"1\",nonce=\"abc\",ext=\"some-ext-app-data\"", h.toString());
 	}
 	
 	@Test
@@ -38,7 +38,7 @@ public class AuthorizationHeaderGenerationTest {
 		build();
 		
 		AuthorizationHeader h = j.createAuthorizationHeader();
-		assertEquals("Hawk id=\"x\",mac=\"BC2A5C9BAD29D3D15149E124722C30EA1A8C79BF9B1F0BFAC35E9D332A4BFE06\",hash=\"dMihgvOJ+wzpELyqj4yl72U0mv8ZWI4tvEFcIXk+iD8=\",ts=\"1\",nonce=\"abc\"",
+		assertEquals("Hawk id=\"x\",mac=\"vCpcm60p09FRSeEkciww6hqMeb+bHwv6w16dMypL/gY=\",hash=\"dMihgvOJ+wzpELyqj4yl72U0mv8ZWI4tvEFcIXk+iD8=\",ts=\"1\",nonce=\"abc\"",
 				h.toString());
 
 	}
