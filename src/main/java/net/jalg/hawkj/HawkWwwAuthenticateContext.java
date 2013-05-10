@@ -246,7 +246,7 @@ public class HawkWwwAuthenticateContext {
 
 		private HawkWwwAuthenticateContextBuilder ts(int ts) {
 			if (ts <= 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("0 is an invalid timestamp");
 			}
 			this.ts = ts;
 			return this;
@@ -254,7 +254,7 @@ public class HawkWwwAuthenticateContext {
 
 		private HawkWwwAuthenticateContextBuilder tsm(String tsm) {
 			if (tsm == null || tsm.length() == 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null or empty tsm not allowed");
 			}
 			this.tsm = tsm;
 			return this;
@@ -262,7 +262,7 @@ public class HawkWwwAuthenticateContext {
 
 		private HawkWwwAuthenticateContextBuilder id(String id) {
 			if (id == null || id.length() == 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null or empty id not allowed");
 			}
 			this.id = id;
 			return this;
@@ -270,7 +270,7 @@ public class HawkWwwAuthenticateContext {
 
 		private HawkWwwAuthenticateContextBuilder key(String key) {
 			if (key == null || key.length() == 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null or empty key not allowed");
 			}
 			this.key = key;
 			return this;
@@ -278,7 +278,7 @@ public class HawkWwwAuthenticateContext {
 
 		private HawkWwwAuthenticateContextBuilder algorithm(Algorithm algorithm) {
 			if (algorithm == null) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null algorithm not allowed");
 			}
 			this.algorithm = algorithm;
 			return this;
@@ -304,7 +304,7 @@ public class HawkWwwAuthenticateContext {
 				 */
 				if (this.id == null || this.key == null
 						|| this.algorithm == null) {
-					throw new IllegalStateException();
+					throw new IllegalStateException("Null or empty key not allowed");
 				}
 				/*
 				 * Create a new context for WWW-Authenticate headers that

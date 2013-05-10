@@ -398,7 +398,7 @@ public class HawkContext {
 
 		private HawkContextBuilder method(String method) {
 			if (method == null || method.length() == 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null or empty method not allowed");
 			}
 			this.method = method;
 			return this;
@@ -406,7 +406,7 @@ public class HawkContext {
 
 		private HawkContextBuilder path(String path) {
 			if (path == null || path.length() == 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null or empty path not allowed");
 			}
 			this.path = path;
 			return this;
@@ -414,7 +414,7 @@ public class HawkContext {
 
 		private HawkContextBuilder host(String host) {
 			if (host == null || host.length() == 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null or empty not allowed");
 			}
 			this.host = host;
 			return this;
@@ -422,7 +422,7 @@ public class HawkContext {
 
 		private HawkContextBuilder port(int port) {
 			if (port <= 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("0 is an invalid port number");
 			}
 			this.port = port;
 			return this;
@@ -430,7 +430,7 @@ public class HawkContext {
 
 		private HawkContextBuilder ts(int ts) {
 			if (ts <= 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("0 is an invalid time stamp");
 			}
 			this.ts = ts;
 			return this;
@@ -438,7 +438,7 @@ public class HawkContext {
 
 		private HawkContextBuilder nonce(String nonce) {
 			if (nonce == null || nonce.length() == 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null or empty nonce not allowed");
 			}
 			this.nonce = nonce;
 			return this;
@@ -446,7 +446,7 @@ public class HawkContext {
 
 		private HawkContextBuilder id(String id) {
 			if (id == null || id.length() == 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null or empty id not allowed");
 			}
 			this.id = id;
 			return this;
@@ -454,7 +454,7 @@ public class HawkContext {
 
 		private HawkContextBuilder key(String key) {
 			if (key == null || key.length() == 0) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null or empty key not allowed");
 			}
 			this.key = key;
 			return this;
@@ -462,7 +462,7 @@ public class HawkContext {
 
 		private HawkContextBuilder algorithm(Algorithm algorithm) {
 			if (algorithm == null) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Null algorithm is not allowed");
 			}
 			this.algorithm = algorithm;
 			return this;
@@ -504,7 +504,7 @@ public class HawkContext {
 			// empty content type is ok according to Hawk.
 			if (contentType == null) { 
 				throw new IllegalArgumentException(
-						"Content type must not be null or empty");
+						"Content type must not be null");
 			}
 			this.body = body;
 			this.contentType = contentType;
