@@ -47,6 +47,14 @@ public class WwwAuthenticateHeaderGenerationTest {
 		WwwAuthenticateHeader h = j.createWwwAuthenticateHeader();
 		assertFalse(j.isValidTimestampMac("ahjghfjwgefj"));
 	}
+	
+	@Test
+	public void testHeaderGenerationError() throws HawkException {
+		HawkWwwAuthenticateContext j = HawkWwwAuthenticateContext.error(HawkError.EXPIRED).build();
+		WwwAuthenticateHeader h = j.createWwwAuthenticateHeader();
+		assertEquals("Hawk error=\"expired\"" , h.toString());
+	}
+	
 //	
 //	@Test
 //	public void testHeaderGenerationWithExtData() throws HawkException {

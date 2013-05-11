@@ -1,15 +1,8 @@
 package net.jalg.hawkj;
 
-import static org.junit.Assert.*;
-
-
-import net.jalg.hawkj.Algorithm;
-import net.jalg.hawkj.AuthorizationHeader;
-import net.jalg.hawkj.HawkContext;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder_C;
-import net.jalg.hawkj.HawkException;
 
 import org.junit.Before;
 import org.junit.Test;

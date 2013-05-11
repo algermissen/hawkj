@@ -56,6 +56,8 @@ public class HawkWwwAuthenticateContext {
 	private final String id;
 	private final String key;
 	private final Algorithm algorithm;
+	
+	private final HawkError error;
 
 	private HawkWwwAuthenticateContext() {
 		this.ts = 0;
@@ -63,7 +65,7 @@ public class HawkWwwAuthenticateContext {
 		this.id = null;
 		this.key = null;
 		this.algorithm = null;
-
+		this.error = null;
 	}
 
 	private HawkWwwAuthenticateContext(int ts, String tsm, String id,
@@ -73,7 +75,16 @@ public class HawkWwwAuthenticateContext {
 		this.id = id;
 		this.key = key;
 		this.algorithm = algorithm;
-
+		this.error = null;
+	}
+	
+	private HawkWwwAuthenticateContext(HawkError error) {
+		this.ts = 0;
+		this.tsm = null;
+		this.id = null;
+		this.key = null;
+		this.algorithm = null;
+		this.error = error;
 	}
 
 	public int getTs() {
@@ -95,6 +106,10 @@ public class HawkWwwAuthenticateContext {
 	public String getTsm() {
 		return this.tsm;
 	}
+	
+	public HawkError getError() {
+		return this.error;
+	}
 
 	public boolean hasTs() {
 		return ts != 0;
@@ -102,6 +117,9 @@ public class HawkWwwAuthenticateContext {
 
 	public boolean hasTsm() {
 		return tsm != null;
+	}
+	public boolean hasError() {
+		return error != null;
 	}
 
 	/**
@@ -130,9 +148,15 @@ public class HawkWwwAuthenticateContext {
 				headerBuilder.ts(getTs()).tsm(hmac);
 			} else {
 				headerBuilder.ts(getTs()).tsm(getTsm());
-
+			}
+			if(hasError()) {
+				throw new IllegalStateException("Context cannot contain error and ts at the same time.");
 			}
 		}
+		if(hasError()) {
+			headerBuilder.error(this.error);
+		}
+		
 
 		return headerBuilder.build();
 	}
@@ -216,6 +240,10 @@ public class HawkWwwAuthenticateContext {
 			String tsm) {
 		return new HawkWwwAuthenticateContextBuilder().ts(ts).tsm(tsm);
 	}
+	
+	public static HawkWwwAuthenticateContextBuilder error(HawkError error) {
+		return new HawkWwwAuthenticateContextBuilder().error(error);
+	}
 
 	public static HawkWwwAuthenticateContextBuilder_A ts() {
 		int now = (int) (System.currentTimeMillis() / 1000L);
@@ -240,6 +268,8 @@ public class HawkWwwAuthenticateContext {
 
 		private int ts;
 		private String tsm;
+		
+		private HawkError error;
 
 		private HawkWwwAuthenticateContextBuilder() {
 		}
@@ -283,11 +313,18 @@ public class HawkWwwAuthenticateContext {
 			this.algorithm = algorithm;
 			return this;
 		}
+		
+		public HawkWwwAuthenticateContextBuilder error(HawkError error) {
+			this.error = error;
+			return this;
+		}
 
 		public HawkWwwAuthenticateContextBuilder credentials(String id,
 				String key, Algorithm algorithm) {
 			return id(id).key(key).algorithm(algorithm);
 		}
+		
+
 
 		public HawkWwwAuthenticateContext build() throws HawkException {
 
@@ -306,6 +343,10 @@ public class HawkWwwAuthenticateContext {
 						|| this.algorithm == null) {
 					throw new IllegalStateException("Null or empty key not allowed");
 				}
+				
+				if(this.error != null) {
+					throw new IllegalStateException("Hawk does not allow ts and error parameters together.");
+				}
 				/*
 				 * Create a new context for WWW-Authenticate headers that
 				 * communicate a current timestamp to the client.
@@ -313,6 +354,13 @@ public class HawkWwwAuthenticateContext {
 				return new HawkWwwAuthenticateContext(this.ts, this.tsm,
 						this.id, this.key, this.algorithm);
 
+			}
+			/*
+			 * If this is a builder for error WWW-Authenticate headers, construct
+			 * a context containing the error.
+			 */
+			if( this.error != null) {
+				return new HawkWwwAuthenticateContext(this.error);
 			}
 
 			/*

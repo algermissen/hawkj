@@ -1,18 +1,7 @@
 package net.jalg.hawkj;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-
-import net.jalg.hawkj.Algorithm;
-import net.jalg.hawkj.AuthHeaderParsingException;
-import net.jalg.hawkj.WwwAuthenticateHeader;
-import net.jalg.hawkj.HawkContext;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder_C;
-import net.jalg.hawkj.HawkException;
-
-import org.junit.Before;
 import org.junit.Test;
 
 public class WwwAuthenticateHeaderParsingTest {
@@ -80,6 +69,18 @@ public class WwwAuthenticateHeaderParsingTest {
 		WwwAuthenticateHeader h = WwwAuthenticateHeader.wwwAuthenticate(hv);
 		assertEquals("Hawk ts=\"1\",tsm=\"abcdefghijk\"" , h.toString());
 		assertEquals("abcdefghijk",h.getTsm());
+	}
+	
+	@Test
+	public void testErrorParseAndToString() throws HawkException, AuthHeaderParsingException {
+		String hv = "Hawk error=\"expired\"";
+		WwwAuthenticateHeader h = WwwAuthenticateHeader.wwwAuthenticate(hv);
+		assertEquals("Hawk error=\"expired\"" , h.toString());
+	}
+	@Test(expected = AuthHeaderParsingException.class)
+	public void testErrorParseUnknownHawkErrorFails() throws HawkException, AuthHeaderParsingException {
+		String hv = "Hawk error=\"damaged\"";
+		WwwAuthenticateHeader.wwwAuthenticate(hv);
 	}
 	
 	

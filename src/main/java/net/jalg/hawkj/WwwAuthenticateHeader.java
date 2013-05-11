@@ -13,7 +13,7 @@ public class WwwAuthenticateHeader {
 	private static final String ESCDQUOTE = "\""; 
 	
 //	private String realm;
-//	private HawkError error;
+	private HawkError error;
 	private int ts;
 	private String tsm;
 
@@ -53,10 +53,10 @@ public class WwwAuthenticateHeader {
 			sb.append(delim).append("tsm=\"").append(tsm).append(ESCDQUOTE);
 			delim = COMMA;
 		}
-//		if (error != null) {
-//			sb.append(delim).append("error=\"").append(error).append(ESCDQUOTE);
-//			delim = COMMA;
-//		}
+		if (error != null) {
+			sb.append(delim).append("error=\"").append(error.getCode()).append(ESCDQUOTE);
+			delim = COMMA;
+		}
 		// FIXME: extension elements?
 		return sb.toString();
 	}
@@ -77,7 +77,7 @@ public class WwwAuthenticateHeader {
 
 	public static class WwwAuthenticateBuilder implements AuthDirectiveBuilder {
 //		private String realm;
-//		private HawkError error;
+		private HawkError error;
 		private int ts;
 		private String tsm;
 
@@ -88,7 +88,7 @@ public class WwwAuthenticateHeader {
 		public WwwAuthenticateHeader build() {
 			WwwAuthenticateHeader instance = new WwwAuthenticateHeader();
 //			instance.realm = this.realm;
-//			instance.error = this.error;
+			instance.error = this.error;
 			instance.ts = this.ts;
 			instance.tsm = this.tsm;
 			return instance;
@@ -99,10 +99,10 @@ public class WwwAuthenticateHeader {
 //			return this;
 //		}
 
-//		public WwwAuthenticateBuilder error(HawkError error) {
-//			this.error = error;
-//			return this;
-//		}
+		public WwwAuthenticateBuilder error(HawkError error) {
+			this.error = error;
+			return this;
+		}
 		public WwwAuthenticateBuilder ts(int ts) {
 			this.ts = ts;
 			return this;
@@ -128,12 +128,6 @@ public class WwwAuthenticateHeader {
 			key = key.toLowerCase();
 //			if (key.equals("realm")) {
 //				realm(value);
-//			} else if (key.equals("error")) {
-//				HawkError e = HawkError.valueOf(value);
-//				if(e == null) {
-//					throw new AuthHeaderParsingException(value + "is not a recognized Hawk error");
-//				}
-//				error(e); 
 			if (key.equals("ts")) {
 				try {
 					ts(Integer.parseInt(value));
@@ -142,6 +136,12 @@ public class WwwAuthenticateHeader {
 				}
 			} else if (key.equals("tsm")) {
 				tsm(value);
+			} else if (key.equals("error")) {
+				HawkError e = HawkError.fromString(value);
+				if(e == null) {
+					throw new AuthHeaderParsingException(value + "is not a recognized Hawk error");
+				}
+				error(e); 
 			} else {
 				// FIXME: must-ignore key. Or parse extension?
 			}
