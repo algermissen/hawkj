@@ -254,6 +254,7 @@ public class HawkContext {
 		// FIXME: escaping of stuff in ext to ha single ine.
 		return sb.toString();
 
+		// FIXME - this is a todo!
 		// if (options.ext) {
 		// normalized += options.ext.replace('\\', '\\\\').replace('\n', '\\n');
 		// }

@@ -38,6 +38,7 @@ public class Util {
 	}
 	
 	/**
+	 * FIXME: fix docs
 	 * Convert a byte array to a string using. This method turns a byte array
 	 * into a string using two characters per byte and encoding the byte value
 	 * as a two character hex value.

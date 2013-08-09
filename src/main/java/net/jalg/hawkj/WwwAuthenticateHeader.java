@@ -41,6 +41,7 @@ public class WwwAuthenticateHeader {
 		//FIXME  beware " escaping
 		StringBuilder sb = new StringBuilder(HawkContext.SCHEME);
 		char delim = BLANK;
+		// FIXME: integrate realm
 //		if (realm != null) {
 //			sb.append(delim).append("realm=\"").append(realm).append(ESCDQUOTE);
 //			delim = COMMA;
