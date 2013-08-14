@@ -5,7 +5,7 @@ package net.jalg.hawkj;
  * This is an extension to Hawk, tailored towards an authorization protocol built on top of Hawk.
  * This is currently <b>not</b> <a href="https://github.com/hueniverse/oz">Oz</a> however, it is related to the ideas of Oz.
  * 
- * FIXME docs
+ * FIXME See https://github.com/algermissen/hawkj/issues/12
  * 
  * @author Jan Algermissen, http://jalg.net
  *

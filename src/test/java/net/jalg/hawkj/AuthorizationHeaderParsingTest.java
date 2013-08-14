@@ -8,8 +8,8 @@ import net.jalg.hawkj.AuthHeaderParsingException;
 import net.jalg.hawkj.AuthorizationHeader;
 import net.jalg.hawkj.HawkContext;
 import net.jalg.hawkj.HawkContext.HawkContextBuilder;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
 import net.jalg.hawkj.HawkContext.HawkContextBuilder_C;
+import net.jalg.hawkj.HawkContext.HawkContextBuilder_D;
 import net.jalg.hawkj.HawkException;
 
 import org.junit.Before;
@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class AuthorizationHeaderParsingTest {
 
-	HawkContextBuilder_B b;
+	HawkContextBuilder_C b;
 	HawkContext c;
 	
 	

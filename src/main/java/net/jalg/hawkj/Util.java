@@ -37,24 +37,20 @@ public class Util {
 		return new String(hexChars);
 	}
 	
-	/**
-	 * FIXME: fix docs
-	 * Convert a byte array to a string using. This method turns a byte array
-	 * into a string using two characters per byte and encoding the byte value
-	 * as a two character hex value.
-	 * <p>
-	 * The resulting string will have a length twice as long as the original
-	 * byte array.
-	 * </p>
+	/** Generate a random string with a certain entropy.
+	 * 
+	 * This creates a random string with the entropy of nbytes and encodes
+	 * that string in hex format. That means, the returned string will be
+	 * twice as long as the requested entropy.
 	 * <p>
 	 * The string will be suitable for use in URLs or HTTP headers etc. without
 	 * further escaping.
 	 * </p>
 	 * 
 	 * 
-	 * @param bytes
-	 *            The byte array to turn into a string.
-	 * @return Byes of the array as a string.
+	 * @param nbytes Number of bytes for entryopy
+	 * 
+	 * @return Hex encoded random string of length 2 x nbytes.
 	 */
 	public static String generateRandomString(int nbytes) {
 		byte[] salt = new byte[nbytes];

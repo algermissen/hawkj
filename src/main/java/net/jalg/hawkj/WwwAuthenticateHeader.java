@@ -14,7 +14,7 @@ public class WwwAuthenticateHeader {
 	
 //	private String realm;
 	private HawkError error;
-	private int ts;
+	private long ts;
 	private String tsm;
 
 	// private boolean isReadonly;
@@ -25,7 +25,7 @@ public class WwwAuthenticateHeader {
 		// requireOwner = true;
 	}
 	
-	public int getTs() {
+	public long getTs() {
 		return ts;
 	}
 	
@@ -79,7 +79,7 @@ public class WwwAuthenticateHeader {
 	public static class WwwAuthenticateBuilder implements AuthDirectiveBuilder {
 //		private String realm;
 		private HawkError error;
-		private int ts;
+		private long ts;
 		private String tsm;
 
 		private WwwAuthenticateBuilder() {
@@ -104,7 +104,7 @@ public class WwwAuthenticateHeader {
 			this.error = error;
 			return this;
 		}
-		public WwwAuthenticateBuilder ts(int ts) {
+		public WwwAuthenticateBuilder ts(long ts) {
 			this.ts = ts;
 			return this;
 		}
@@ -131,7 +131,7 @@ public class WwwAuthenticateHeader {
 //				realm(value);
 			if (key.equals("ts")) {
 				try {
-					ts(Integer.parseInt(value));
+					ts(Long.parseLong(value));
 				} catch(NumberFormatException e) {
 					throw new AuthHeaderParsingException(value + " is not an integer value",e);
 				}

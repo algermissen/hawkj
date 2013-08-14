@@ -7,7 +7,7 @@ import net.jalg.hawkj.Algorithm;
 import net.jalg.hawkj.AuthorizationHeader;
 import net.jalg.hawkj.HawkContext;
 import net.jalg.hawkj.HawkContext.HawkContextBuilder;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder_C;
+import net.jalg.hawkj.HawkContext.HawkContextBuilder_D;
 import net.jalg.hawkj.HawkException;
 
 import org.junit.Before;
@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class ExtAndHashTest {
 
-	HawkContextBuilder_C b;
+	HawkContextBuilder_D b;
 	HawkContext c;
 	
 	

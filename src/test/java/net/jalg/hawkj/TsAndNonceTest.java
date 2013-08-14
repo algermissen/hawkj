@@ -2,14 +2,14 @@ package net.jalg.hawkj;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import net.jalg.hawkj.HawkContext.HawkContextBuilder_B;
+import net.jalg.hawkj.HawkContext.HawkContextBuilder_C;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class TsAndNonceTest {
 
-	HawkContextBuilder_B b;
+	HawkContextBuilder_C b;
 	HawkContext c;
 	
 	

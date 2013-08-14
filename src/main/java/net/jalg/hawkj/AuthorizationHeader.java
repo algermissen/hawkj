@@ -16,7 +16,7 @@ public class AuthorizationHeader {
 	private String mac;
 	private String hash;
 	private String nonce;
-	private int ts;
+	private long ts;
 	private String ext;
 
 	private AuthorizationHeader() {
@@ -34,7 +34,7 @@ public class AuthorizationHeader {
 		return hash;
 	}
 
-	public int getTs() {
+	public long getTs() {
 		return ts;
 	}
 
@@ -47,7 +47,6 @@ public class AuthorizationHeader {
 	}
 
 	public String toString() {
-		// beware " escaping
 		StringBuilder sb = new StringBuilder(HawkContext.SCHEME);
 		char delim = BLANK;
 		if (id != null) {
@@ -71,6 +70,7 @@ public class AuthorizationHeader {
 			delim = COMMA;
 		}
 		if (ext != null) {
+			// Regarding escaping see https://github.com/algermissen/hawkj/issues/1
 			String escaped = ext.replace(ESCDQUOTE, "\\\"");
 			sb.append(delim).append("ext=\"").append(escaped).append(ESCDQUOTE);
 			delim = COMMA;
@@ -95,7 +95,7 @@ public class AuthorizationHeader {
 		private String mac;
 		private String hash;
 		private String nonce;
-		private int ts;
+		private long ts;
 		private String ext;
 
 		private AuthorizationBuilder() {
@@ -129,7 +129,7 @@ public class AuthorizationHeader {
 			return this;
 		}
 
-		public AuthorizationBuilder ts(int ts) {
+		public AuthorizationBuilder ts(long ts) {
 			this.ts = ts;
 			return this;
 		}
@@ -159,7 +159,9 @@ public class AuthorizationHeader {
 				throw new AuthHeaderParsingException("value is null for key: "
 						+ key);
 			}
-			// check null
+			if (key == null) {
+				throw new AuthHeaderParsingException("Received null-key");
+			}
 			key = key.toLowerCase();
 			if (key.equals("id")) {
 				id(value);
@@ -169,17 +171,17 @@ public class AuthorizationHeader {
 				hash(value);
 			} else if (key.equals("ts")) {
 				try {
-					ts(Integer.parseInt(value));
+					ts(Long.parseLong(value));
 				} catch (NumberFormatException e) {
 					throw new AuthHeaderParsingException(value
-							+ " is not an integer value", e);
+							+ " is not a long value", e);
 				}
 			} else if (key.equals("nonce")) {
 				nonce(value);
 			} else if (key.equals("ext")) {
 				ext(value);
 			} else {
-				// FIXME: must-ignore key? Must choke?
+				// Ignore unknown parameter
 			}
 
 		}

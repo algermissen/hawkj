@@ -64,6 +64,9 @@ public class HawkContext {
 
 	public static final String SCHEME = "Hawk";
 	public static final String SERVER_AUTHORIZATION = "Server-Authorization";
+	
+	// See https://github.com/hueniverse/hawk/issues/82 for rationale
+	public static final int NUMBER_OF_NONCE_BYTES = 6;
 
 	// private static final String BODY_HASH_ALGORITHM = "SHA-1";
 	private static final String SLF = "\n"; // String-LineFeed
@@ -80,7 +83,7 @@ public class HawkContext {
 	private final String host;
 	private final int port;
 
-	private final int ts;
+	private final long ts;
 	private final String nonce;
 
 	private final String id;
@@ -90,10 +93,12 @@ public class HawkContext {
 	private final String hash;
 
 	private final String ext;
+	
+	private final long offset;
 
 	private HawkContext(String method, String path, String host, int port,
-			int ts, String nonce, String id, String key, Algorithm algorithm,
-			String hash, String ext) {
+			long ts, String nonce, String id, String key, Algorithm algorithm,
+			String hash, String ext,long offset) {
 		this.method = method;
 		this.path = path;
 		this.host = host;
@@ -105,10 +110,11 @@ public class HawkContext {
 		this.algorithm = algorithm;
 		this.hash = hash;
 		this.ext = ext;
+		this.offset = offset;
 
 	}
 
-	public int getTs() {
+	public long getTs() {
 		return this.ts;
 	}
 
@@ -158,6 +164,10 @@ public class HawkContext {
 
 	public boolean hasExt() {
 		return ext != null;
+	}
+	
+	public long getOffset() {
+		return this.offset;
 	}
 
 	/**
@@ -252,9 +262,11 @@ public class HawkContext {
 		sb.append(hasHash() ? getHash() : "").append(SLF);
 		sb.append(hasExt() ? getExt() : "").append(SLF);
 		// FIXME: escaping of stuff in ext to ha single ine.
+		// See https://github.com/algermissen/hawkj/issues/1
 		return sb.toString();
 
 		// FIXME - this is a todo!
+		// https://github.com/algermissen/hawkj/issues/1
 		// if (options.ext) {
 		// normalized += options.ext.replace('\\', '\\\\').replace('\n', '\\n');
 		// }
@@ -309,10 +321,15 @@ public class HawkContext {
 	 * @return HawkContextBuilder initialized with cloned data from this
 	 *         HawkContext.
 	 */
-	public HawkContextBuilder_C cloneC() {
-		return request(this.method, this.path, this.host, this.port)
+	public HawkContextBuilder_D cloneC() {
+		return offset(this.offset).request(this.method, this.path, this.host, this.port)
 				.credentials(this.id, this.key, this.algorithm).tsAndNonce(
 						this.ts, this.nonce);
+	}
+	
+	public static HawkContextBuilder_A offset(long offset) {
+		
+		return new HawkContextBuilder().offset(offset);
 	}
 
 	/**
@@ -324,19 +341,18 @@ public class HawkContext {
 	 * @param port
 	 * @return
 	 */
-	public static HawkContextBuilder_A request(String method, String path,
+	public static HawkContextBuilder_B request(String method, String path,
 			String host, int port) {
 		return new HawkContextBuilder().method(method).path(path).host(host)
 				.port(port);
 	}
-
+	
 	/**
 	 * @author Jan Algermissen, http://jalg.net
 	 * 
 	 */
 	public static interface HawkContextBuilder_A {
-		public HawkContextBuilder_B credentials(String id, String key,
-				Algorithm algorithm);
+		public HawkContextBuilder_B request(String method, String path, String host, int port);
 	}
 
 	/**
@@ -344,15 +360,8 @@ public class HawkContext {
 	 * 
 	 */
 	public static interface HawkContextBuilder_B {
-		public HawkContextBuilder_C tsAndNonce(int ts, String nonce);
-
-		public HawkContextBuilder_C body(byte[] body, String contentType);
-
-		public HawkContextBuilder_C hash(String hash);
-
-		public HawkContextBuilder_C ext(String ext);
-
-		public HawkContext build() throws HawkException;
+		public HawkContextBuilder_C credentials(String id, String key,
+				Algorithm algorithm);
 	}
 
 	/**
@@ -360,11 +369,13 @@ public class HawkContext {
 	 * 
 	 */
 	public static interface HawkContextBuilder_C {
-		public HawkContextBuilder_C body(byte[] body, String contentType);
+		public HawkContextBuilder_D tsAndNonce(long ts, String nonce);
 
-		public HawkContextBuilder_C hash(String hash);
+		public HawkContextBuilder_D body(byte[] body, String contentType);
 
-		public HawkContextBuilder_C ext(String ext);
+		public HawkContextBuilder_D hash(String hash);
+
+		public HawkContextBuilder_D ext(String ext);
 
 		public HawkContext build() throws HawkException;
 	}
@@ -373,8 +384,22 @@ public class HawkContext {
 	 * @author Jan Algermissen, http://jalg.net
 	 * 
 	 */
-	public static class HawkContextBuilder implements HawkContextBuilder_A,
-			HawkContextBuilder_B, HawkContextBuilder_C {
+	public static interface HawkContextBuilder_D {
+		public HawkContextBuilder_D body(byte[] body, String contentType);
+
+		public HawkContextBuilder_D hash(String hash);
+
+		public HawkContextBuilder_D ext(String ext);
+
+		public HawkContext build() throws HawkException;
+	}
+
+	/**
+	 * @author Jan Algermissen, http://jalg.net
+	 * 
+	 */
+	public static class HawkContextBuilder implements HawkContextBuilder_A, HawkContextBuilder_B,
+			HawkContextBuilder_C, HawkContextBuilder_D {
 
 		private String method;
 		private String path;
@@ -386,17 +411,24 @@ public class HawkContext {
 		private String id;
 		private String key;
 
-		private int ts;
+		private long ts;
 		private String nonce;
 
 		private String ext;
 
 		private Algorithm algorithm;
 		private String contentType;
+		
+		private long offset;
 
 		private HawkContextBuilder() {
 		}
 
+		private HawkContextBuilder offset(long offset) {
+			this.offset = offset;
+			return this;
+		}
+		
 		private HawkContextBuilder method(String method) {
 			if (method == null || method.length() == 0) {
 				throw new IllegalArgumentException("Null or empty method not allowed");
@@ -429,7 +461,7 @@ public class HawkContext {
 			return this;
 		}
 
-		private HawkContextBuilder ts(int ts) {
+		private HawkContextBuilder ts(long ts) {
 			if (ts <= 0) {
 				throw new IllegalArgumentException("0 is an invalid time stamp");
 			}
@@ -476,7 +508,7 @@ public class HawkContext {
 		 * net.jalg.hawkj.HawkContext.HawkContextBuilder_A#credentials(java.
 		 * lang.String, java.lang.String, net.jalg.hawkj.Algorithm)
 		 */
-		public HawkContextBuilder_B credentials(String id, String key,
+		public HawkContextBuilder_C credentials(String id, String key,
 				Algorithm algorithm) {
 			return id(id).key(key).algorithm(algorithm);
 		}
@@ -484,10 +516,10 @@ public class HawkContext {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#tsAndNonce(int,
+		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#tsAndNonce(long,
 		 * java.lang.String)
 		 */
-		public HawkContextBuilder_C tsAndNonce(int ts, String nonce) {
+		public HawkContextBuilder_D tsAndNonce(long ts, String nonce) {
 			return ts(ts).nonce(nonce);
 		}
 
@@ -497,12 +529,12 @@ public class HawkContext {
 		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#body(byte[],
 		 * java.lang.String)
 		 */
-		public HawkContextBuilder_C body(byte[] body, String contentType) {
+		public HawkContextBuilder_D body(byte[] body, String contentType) {
 			if (body == null || body.length == 0) {
 				throw new IllegalArgumentException(
 						"Body must not be null or empty");
 			}
-			// empty content type is ok according to Hawk.
+			// Need the content type
 			if (contentType == null) { 
 				throw new IllegalArgumentException(
 						"Content type must not be null");
@@ -521,7 +553,7 @@ public class HawkContext {
 		 * net.jalg.hawkj.HawkContext.HawkContextBuilder_B#hash(java.lang.String
 		 * )
 		 */
-		public HawkContextBuilder_C hash(String hash) {
+		public HawkContextBuilder_D hash(String hash) {
 			if (hash != null && hash.length() > 0) {
 				this.hash = hash;
 			}
@@ -536,7 +568,7 @@ public class HawkContext {
 		 * @see
 		 * net.jalg.hawkj.HawkContext.HawkContextBuilder_B#ext(java.lang.String)
 		 */
-		public HawkContextBuilder_C ext(String ext) {
+		public HawkContextBuilder_D ext(String ext) {
 			if (ext == null || ext.length() == 0) {
 				return this;
 			}
@@ -563,7 +595,7 @@ public class HawkContext {
 		 */
 		public HawkContext build() throws HawkException {
 
-			int ts = 0;
+			long ts = 0;
 			String nonce = null;
 			String hash = null;
 
@@ -572,7 +604,8 @@ public class HawkContext {
 			 * new timestamp.
 			 */
 			if (this.ts == 0) {
-				ts = (int) (System.currentTimeMillis() / 1000);
+				ts = (long) (System.currentTimeMillis() / 1000);
+				ts = ts + this.offset;
 			} else {
 				ts = this.ts;
 			}
@@ -582,9 +615,7 @@ public class HawkContext {
 			 * new nonce.
 			 */
 			if (this.nonce == null) {
-				nonce = Util.generateRandomString(6); // FIXME: Why 6? results
-														// in 12 due to
-														// bytesToHex. FIXME!
+				nonce = Util.generateRandomString(NUMBER_OF_NONCE_BYTES);
 			} else {
 				nonce = this.nonce;
 			}
@@ -608,7 +639,7 @@ public class HawkContext {
 
 			return new HawkContext(this.method, this.path, this.host,
 					this.port, ts, nonce, this.id, this.key, this.algorithm,
-					hash, this.ext);
+					hash, this.ext,this.offset);
 		}
 
 		/**
@@ -645,6 +676,7 @@ public class HawkContext {
 				MessageDigest md = MessageDigest.getInstance(algorithm
 						.getMessageDigestName());
 				
+				
 				md.update(baseString.getBytes(StandardCharsets.UTF_8));
 				md.update(body);
 				md.update(BLF);
@@ -655,6 +687,11 @@ public class HawkContext {
 						+ algorithm.getMessageDigestName() + " not found", e1);
 			}
 
+		}
+
+		@Override
+		public HawkContextBuilder_B request(String method, String path, String host, int port) {
+			return this.method(method).path(path).host(host) .port(port);
 		}
 
 	}

@@ -50,7 +50,7 @@ public class HawkWwwAuthenticateContext {
 	private static final String HAWK_VERSION = "1";
 	private static final String HAWK_TS_PREFIX = "hawk." + HAWK_VERSION + ".ts";
 
-	private final int ts;
+	private final long ts;
 	private final String tsm;
 
 	private final String id;
@@ -68,7 +68,7 @@ public class HawkWwwAuthenticateContext {
 		this.error = null;
 	}
 
-	private HawkWwwAuthenticateContext(int ts, String tsm, String id,
+	private HawkWwwAuthenticateContext(long ts, String tsm, String id,
 			String key, Algorithm algorithm) {
 		this.ts = ts;
 		this.tsm = tsm;
@@ -87,7 +87,7 @@ public class HawkWwwAuthenticateContext {
 		this.error = error;
 	}
 
-	public int getTs() {
+	public long getTs() {
 		return this.ts;
 	}
 
@@ -230,15 +230,15 @@ public class HawkWwwAuthenticateContext {
 	 * Create a new HawkWwwAuthenticateContextBuilder_A, initialized with
 	 * timestamp and timestamp hmac.
 	 * 
-	 * @param ts
+	 * @param l
 	 *            The timestamp
 	 * @param tsm
 	 *            The timestamp HMAC
 	 * @return A new Builder with the parameters set.
 	 */
-	public static HawkWwwAuthenticateContextBuilder_A tsAndTsm(int ts,
+	public static HawkWwwAuthenticateContextBuilder_A tsAndTsm(long l,
 			String tsm) {
-		return new HawkWwwAuthenticateContextBuilder().ts(ts).tsm(tsm);
+		return new HawkWwwAuthenticateContextBuilder().ts(l).tsm(tsm);
 	}
 	
 	public static HawkWwwAuthenticateContextBuilder error(HawkError error) {
@@ -246,7 +246,8 @@ public class HawkWwwAuthenticateContext {
 	}
 
 	public static HawkWwwAuthenticateContextBuilder_A ts() {
-		int now = (int) (System.currentTimeMillis() / 1000L);
+		// This is server-side used only, so no offset here
+		long now = System.currentTimeMillis() / 1000L;
 		return new HawkWwwAuthenticateContextBuilder().ts(now);
 	}
 
@@ -266,7 +267,7 @@ public class HawkWwwAuthenticateContext {
 		private String key;
 		private Algorithm algorithm;
 
-		private int ts;
+		private long ts;
 		private String tsm;
 		
 		private HawkError error;
@@ -274,7 +275,7 @@ public class HawkWwwAuthenticateContext {
 		private HawkWwwAuthenticateContextBuilder() {
 		}
 
-		private HawkWwwAuthenticateContextBuilder ts(int ts) {
+		private HawkWwwAuthenticateContextBuilder ts(long ts) {
 			if (ts <= 0) {
 				throw new IllegalArgumentException("0 is an invalid timestamp");
 			}
