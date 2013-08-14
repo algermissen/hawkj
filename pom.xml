@@ -13,7 +13,7 @@
   <groupId>net.jalg</groupId>
   <artifactId>hawkj</artifactId>
   <packaging>jar</packaging>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <description>
     hawkj is a Java implementation of the Hawk HTTP authentication scheme.
   </description>
