@@ -1,12 +1,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.jalg</groupId>
   <artifactId>hawkj</artifactId>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
-  <name>hawkj</name>
-  <url>http://maven.apache.org</url>
+  <version>1.0</version>
+  <description>
+    hawkj is a Java implementation of the Hawk HTTP authentication scheme.
+  </description>
+  <url>https://github.com/algermissen/hakwj</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://github.com/algermissen/jiron/blob/master/LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:algermissen/hawkj.git</connection>
+    <developerConnection>scm:git:git@github.com:algermissen/hawkj.git</developerConnection>
+    <url>git@github.com:algermissen/hawkj.git</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>algermissen</id>
+      <name>Jan Algermissen</name>
+      <email>algermissen@acm.org</email>
+    </developer>
+  </developers>
   <dependencies>
    <dependency>
      <groupId>junit</groupId>
@@ -18,14 +48,73 @@
 
    <build>
     <plugins>
+<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
+
     </plugins>
   </build>
+  <profiles>
+  <profile>
+    <id>release-sign-artifacts</id>
+    <activation>
+      <property>
+        <name>performRelease</name>
+        <value>true</value>
+      </property>
+    </activation>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.4</version>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+</profiles>
+
+<distributionManagement>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Nexus Staging Repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+
 </project>
