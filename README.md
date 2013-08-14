@@ -6,8 +6,22 @@ A Java implementation of Hawk
 This is a Java implementation of the Hawk HTTP authentication scheme implemented by Eran Hammer's
 [Hawk](https://github.com/hueniverse/hawk) node.js module.
 
-This is an initial version of the implementation that is not yet stable or production ready. The implementation approach
-is likely to remain stable, but there is a lot of cleanup necessary and some names will definitely change.
+Status
+======
+
+hawkj has been release as version 1.0 and is usable in production with the caveat
+that no feedback from production is available so far. If you consider using hawkj
+in production now, please get in touch.
+
+The maven dependency is
+
+    <dependency>
+      <groupId>net.jalg</groupId>
+      <artifactId>hawkj</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+
 
 Overview
 ========
