@@ -1,6 +1,5 @@
 package net.jalg.hawkj;
 
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,10 +9,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.jalg.hawkj.AuthorizationHeader.AuthorizationBuilder;
 import net.jalg.hawkj.util.Base64;
+import net.jalg.hawkj.util.Charsets;
 
 /**
  * HawkContext is an immutable class for working with Hawk authentication data.
- * 
+ *
  * HawkContext instances contain
  * <ul>
  * <li>HTTP request data: method, path, host, and port.</li>
@@ -56,15 +56,15 @@ import net.jalg.hawkj.util.Base64;
  * HawkContext instance from a request HawkContext instance for generating a
  * Server-Authorization response header)</li>
  * </ul>
- * 
+ *
  * @author Jan Algermissen, http://jalg.net
- * 
+ *
  */
 public class HawkContext {
 
 	public static final String SCHEME = "Hawk";
 	public static final String SERVER_AUTHORIZATION = "Server-Authorization";
-	
+
 	// See https://github.com/hueniverse/hawk/issues/82 for rationale
 	public static final int NUMBER_OF_NONCE_BYTES = 6;
 
@@ -93,7 +93,7 @@ public class HawkContext {
 	private final String hash;
 
 	private final String ext;
-	
+
 	private final long offset;
 
 	private HawkContext(String method, String path, String host, int port,
@@ -165,22 +165,22 @@ public class HawkContext {
 	public boolean hasExt() {
 		return ext != null;
 	}
-	
+
 	public long getOffset() {
 		return this.offset;
 	}
 
 	/**
 	 * Create an Authorization header from this HawkContext.
-	 * 
+	 *
 	 * The method returns a new AuthorizationHeader instance from the data in
 	 * this HawkContext. For this the HMAC of the contained data is calculated
 	 * and put into the header with the other parameters required by the
 	 * specification.
-	 * 
-	 * 
+	 *
+	 *
 	 * @see net.jalg.hawkj.AuthorizationHeader
-	 * 
+	 *
 	 * @return The newly created header object.
 	 * @throws HawkException
 	 */
@@ -202,10 +202,10 @@ public class HawkContext {
 
 	/**
 	 * Verify that a given header matches a HawkContext.
-	 * 
+	 *
 	 * This is designed to be used in clients in order to check the incoming
 	 * Server-Authorization header.
-	 * 
+	 *
 	 * @param header
 	 *            The header (usually Server-Authorization)
 	 * @return true if the header has the exact same id, ts and nonce.
@@ -226,7 +226,7 @@ public class HawkContext {
 
 	/**
 	 * Check whether a given HMAC value matches the HMAC for this HawkContext.
-	 * 
+	 *
 	 * @param hmac
 	 *            The HMAC value to test.
 	 * @return true if the HMAC matches the HMAC computed for this context,
@@ -248,7 +248,7 @@ public class HawkContext {
 
 	/**
 	 * Generate base string for HMAC generation.
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getBaseString() {
@@ -282,7 +282,7 @@ public class HawkContext {
 
 	/**
 	 * Generate an HMAC from the HawkContext.
-	 * 
+	 *
 	 * @return
 	 * @throws HawkException
 	 */
@@ -299,7 +299,7 @@ public class HawkContext {
 		}
 
 		SecretKeySpec secretKey = new SecretKeySpec(getKey().getBytes(
-				StandardCharsets.UTF_8), getAlgorithm().getMacName());
+				Charsets.UTF_8), getAlgorithm().getMacName());
 
 		try {
 			mac.init(secretKey);
@@ -308,7 +308,7 @@ public class HawkContext {
 		}
 
 		return new String(Base64.encodeBase64(mac.doFinal(baseString
-				.getBytes(StandardCharsets.UTF_8))), StandardCharsets.UTF_8);
+				.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
 	}
 
 	/**
@@ -317,7 +317,7 @@ public class HawkContext {
 	 * <p>
 	 * This method is designed to be used for generating Server-Authorization
 	 * headers from HawkContexts parsed from Authorization headers.
-	 * 
+	 *
 	 * @return HawkContextBuilder initialized with cloned data from this
 	 *         HawkContext.
 	 */
@@ -326,15 +326,15 @@ public class HawkContext {
 				.credentials(this.id, this.key, this.algorithm).tsAndNonce(
 						this.ts, this.nonce);
 	}
-	
+
 	public static HawkContextBuilder_A offset(long offset) {
-		
+
 		return new HawkContextBuilder().offset(offset);
 	}
 
 	/**
 	 * Create a new RequestBuilder_A, initialized with request data.
-	 * 
+	 *
 	 * @param method
 	 * @param path
 	 * @param host
@@ -346,10 +346,10 @@ public class HawkContext {
 		return new HawkContextBuilder().method(method).path(path).host(host)
 				.port(port);
 	}
-	
+
 	/**
 	 * @author Jan Algermissen, http://jalg.net
-	 * 
+	 *
 	 */
 	public static interface HawkContextBuilder_A {
 		public HawkContextBuilder_B request(String method, String path, String host, int port);
@@ -357,7 +357,7 @@ public class HawkContext {
 
 	/**
 	 * @author Jan Algermissen, http://jalg.net
-	 * 
+	 *
 	 */
 	public static interface HawkContextBuilder_B {
 		public HawkContextBuilder_C credentials(String id, String key,
@@ -366,7 +366,7 @@ public class HawkContext {
 
 	/**
 	 * @author Jan Algermissen, http://jalg.net
-	 * 
+	 *
 	 */
 	public static interface HawkContextBuilder_C {
 		public HawkContextBuilder_D tsAndNonce(long ts, String nonce);
@@ -382,7 +382,7 @@ public class HawkContext {
 
 	/**
 	 * @author Jan Algermissen, http://jalg.net
-	 * 
+	 *
 	 */
 	public static interface HawkContextBuilder_D {
 		public HawkContextBuilder_D body(byte[] body, String contentType);
@@ -396,7 +396,7 @@ public class HawkContext {
 
 	/**
 	 * @author Jan Algermissen, http://jalg.net
-	 * 
+	 *
 	 */
 	public static class HawkContextBuilder implements HawkContextBuilder_A, HawkContextBuilder_B,
 			HawkContextBuilder_C, HawkContextBuilder_D {
@@ -418,7 +418,7 @@ public class HawkContext {
 
 		private Algorithm algorithm;
 		private String contentType;
-		
+
 		private long offset;
 
 		private HawkContextBuilder() {
@@ -428,7 +428,7 @@ public class HawkContext {
 			this.offset = offset;
 			return this;
 		}
-		
+
 		private HawkContextBuilder method(String method) {
 			if (method == null || method.length() == 0) {
 				throw new IllegalArgumentException("Null or empty method not allowed");
@@ -503,7 +503,7 @@ public class HawkContext {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * net.jalg.hawkj.HawkContext.HawkContextBuilder_A#credentials(java.
 		 * lang.String, java.lang.String, net.jalg.hawkj.Algorithm)
@@ -515,7 +515,7 @@ public class HawkContext {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#tsAndNonce(long,
 		 * java.lang.String)
 		 */
@@ -525,7 +525,7 @@ public class HawkContext {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see net.jalg.hawkj.HawkContext.HawkContextBuilder_B#body(byte[],
 		 * java.lang.String)
 		 */
@@ -535,7 +535,7 @@ public class HawkContext {
 						"Body must not be null or empty");
 			}
 			// Need the content type
-			if (contentType == null) { 
+			if (contentType == null) {
 				throw new IllegalArgumentException(
 						"Content type must not be null");
 			}
@@ -548,7 +548,7 @@ public class HawkContext {
 		// in order to avoid interrupting fluid interface with 'if's
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * net.jalg.hawkj.HawkContext.HawkContextBuilder_B#hash(java.lang.String
 		 * )
@@ -564,7 +564,7 @@ public class HawkContext {
 		// in order to avoid interrupting fluid interface with 'if's
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * net.jalg.hawkj.HawkContext.HawkContextBuilder_B#ext(java.lang.String)
 		 */
@@ -590,7 +590,7 @@ public class HawkContext {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see net.jalg.hawkj.Jhawk.B#build()
 		 */
 		public HawkContext build() throws HawkException {
@@ -644,7 +644,7 @@ public class HawkContext {
 
 		/**
 		 * Calculate payload hash.
-		 * 
+		 *
 		 * @param body
 		 * @param contentType
 		 * @return
@@ -675,13 +675,13 @@ public class HawkContext {
 			try {
 				MessageDigest md = MessageDigest.getInstance(algorithm
 						.getMessageDigestName());
-				
-				
-				md.update(baseString.getBytes(StandardCharsets.UTF_8));
+
+
+				md.update(baseString.getBytes(Charsets.UTF_8));
 				md.update(body);
 				md.update(BLF);
 				return new String(Base64.encodeBase64(md.digest()),
-						StandardCharsets.UTF_8);
+						Charsets.UTF_8);
 			} catch (NoSuchAlgorithmException e1) {
 				throw new HawkException("Digest algorithm "
 						+ algorithm.getMessageDigestName() + " not found", e1);
