@@ -9,7 +9,7 @@ This is a Java implementation of the Hawk HTTP authentication scheme implemented
 Status
 ======
 
-hawkj has been release as version 1.0 and is usable in production with the caveat
+hawkj has been released as version 1.1 and is usable in production with the caveat
 that no feedback from production is available so far. If you consider using hawkj
 in production now, please get in touch.
 
@@ -18,7 +18,7 @@ The maven dependency is
     <dependency>
       <groupId>net.jalg</groupId>
       <artifactId>hawkj</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
     </dependency>
 
 
