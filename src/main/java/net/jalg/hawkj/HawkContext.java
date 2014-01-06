@@ -93,12 +93,14 @@ public class HawkContext {
 	private final String hash;
 
 	private final String ext;
+    private final String app;
+    private final String dlg;
 
 	private final long offset;
 
 	private HawkContext(String method, String path, String host, int port,
 			long ts, String nonce, String id, String key, Algorithm algorithm,
-			String hash, String ext,long offset) {
+			String hash, String ext,String app, String dlg, long offset) {
 		this.method = method;
 		this.path = path;
 		this.host = host;
@@ -110,6 +112,9 @@ public class HawkContext {
 		this.algorithm = algorithm;
 		this.hash = hash;
 		this.ext = ext;
+        this.app = app;
+        this.dlg = dlg;
+
 		this.offset = offset;
 
 	}
@@ -158,13 +163,29 @@ public class HawkContext {
 		return this.ext;
 	}
 
-	public boolean hasHash() {
+    public String getApp() {
+        return app;
+    }
+
+    public String getDlg() {
+        return dlg;
+    }
+
+    public boolean hasHash() {
 		return hash != null;
 	}
 
 	public boolean hasExt() {
 		return ext != null;
 	}
+
+    public boolean hasApp() {
+        return app != null;
+    }
+
+    public boolean hasDlg() {
+        return dlg != null;
+    }
 
 	public long getOffset() {
 		return this.offset;
@@ -193,6 +214,13 @@ public class HawkContext {
 		if (hasExt()) {
 			headerBuilder.ext(getExt());
 		}
+        if (hasApp()) {
+            headerBuilder.app(getApp());
+            if (hasDlg()) {
+                headerBuilder.dlg(getDlg());
+            }
+
+        }
 		if (hasHash()) {
 			headerBuilder.hash(getHash());
 		}
@@ -238,14 +266,6 @@ public class HawkContext {
 		return Util.fixedTimeEqual(this_hmac, hmac);
 	}
 
-	@Override
-	public String toString() {
-		return "Hawk [method=" + method + ", path=" + path + ", host=" + host
-				+ ", port=" + port + ", ts=" + ts + ", nonce=" + nonce
-				+ ", id=" + id + ", key=xxxx, algorithm=" + algorithm
-				+ ", hash=" + hash + ", ext=" + ext + "]";
-	}
-
 	/**
 	 * Generate base string for HMAC generation.
 	 *
@@ -261,11 +281,16 @@ public class HawkContext {
 		sb.append(getPort()).append(SLF);
 		sb.append(hasHash() ? getHash() : "").append(SLF);
 		sb.append(hasExt() ? getExt() : "").append(SLF);
-		// FIXME: escaping of stuff in ext to ha single ine.
+		// FIXME: escaping of stuff in ext to a single line.
 		// See https://github.com/algermissen/hawkj/issues/1
+
+        if(hasApp()) {
+            sb.append(getApp()).append(SLF);
+            sb.append(hasDlg() ? getDlg() : "").append(SLF);
+        }
 		return sb.toString();
 
-		// FIXME - this is a todo!
+		// FIXME - code for ext quote escaping
 		// https://github.com/algermissen/hawkj/issues/1
 		// if (options.ext) {
 		// normalized += options.ext.replace('\\', '\\\\').replace('\n', '\\n');
@@ -347,7 +372,27 @@ public class HawkContext {
 				.port(port);
 	}
 
-	/**
+    @Override
+    public String toString() {
+        return "HawkContext{" +
+                "method='" + method + '\'' +
+                ", path='" + path + '\'' +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                ", ts=" + ts +
+                ", nonce='" + nonce + '\'' +
+                ", id='" + id + '\'' +
+                ", key='" + key + '\'' +
+                ", algorithm=" + algorithm +
+                ", hash='" + hash + '\'' +
+                ", ext='" + ext + '\'' +
+                ", app='" + app + '\'' +
+                ", dlg='" + dlg + '\'' +
+                ", offset=" + offset +
+                '}';
+    }
+
+    /**
 	 * @author Jan Algermissen, http://jalg.net
 	 *
 	 */
@@ -377,6 +422,10 @@ public class HawkContext {
 
 		public HawkContextBuilder_D ext(String ext);
 
+        public HawkContextBuilder_D app(String app);
+
+        public HawkContextBuilder_D dlg(String dlg);
+
 		public HawkContext build() throws HawkException;
 	}
 
@@ -390,6 +439,10 @@ public class HawkContext {
 		public HawkContextBuilder_D hash(String hash);
 
 		public HawkContextBuilder_D ext(String ext);
+
+        public HawkContextBuilder_D app(String app);
+
+        public HawkContextBuilder_D dlg(String dlg);
 
 		public HawkContext build() throws HawkException;
 	}
@@ -415,6 +468,10 @@ public class HawkContext {
 		private String nonce;
 
 		private String ext;
+
+        private String app;
+
+        private String dlg;
 
 		private Algorithm algorithm;
 		private String contentType;
@@ -588,6 +645,20 @@ public class HawkContext {
 			return this;
 		}
 
+        public HawkContextBuilder_D app(String app) {
+            if (app != null && app.length() > 0) {
+                this.app = app;
+            }
+            return this;
+        }
+
+        public HawkContextBuilder_D dlg(String dlg) {
+            if (dlg != null && dlg.length() > 0) {
+                this.dlg = dlg;
+            }
+            return this;
+        }
+
 		/*
 		 * (non-Javadoc)
 		 *
@@ -639,7 +710,7 @@ public class HawkContext {
 
 			return new HawkContext(this.method, this.path, this.host,
 					this.port, ts, nonce, this.id, this.key, this.algorithm,
-					hash, this.ext,this.offset);
+					hash, this.ext, this.app, this.dlg,this.offset);
 		}
 
 		/**

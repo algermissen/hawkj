@@ -2,9 +2,9 @@ package net.jalg.hawkj;
 
 /**
  * Builder implementation for Authorization headers.
- * 
+ *
  * @author Jan Algermissen, http://jalg.net
- * 
+ *
  */
 public class AuthorizationHeader {
 
@@ -18,6 +18,8 @@ public class AuthorizationHeader {
 	private String nonce;
 	private long ts;
 	private String ext;
+    private String app;
+    private String dlg;
 
 	private AuthorizationHeader() {
 	}
@@ -46,7 +48,15 @@ public class AuthorizationHeader {
 		return ext;
 	}
 
-	public String toString() {
+    public String getApp() {
+        return app;
+    }
+
+    public String getDlg() {
+        return dlg;
+    }
+
+    public String toString() {
 		StringBuilder sb = new StringBuilder(HawkContext.SCHEME);
 		char delim = BLANK;
 		if (id != null) {
@@ -75,6 +85,14 @@ public class AuthorizationHeader {
 			sb.append(delim).append("ext=\"").append(escaped).append(ESCDQUOTE);
 			delim = COMMA;
 		}
+        if (app != null) {
+            sb.append(delim).append("app=\"").append(app).append(ESCDQUOTE);
+            delim = COMMA;
+        }
+        if (dlg != null) {
+            sb.append(delim).append("dlg=\"").append(dlg).append(ESCDQUOTE);
+            delim = COMMA;
+        }
 		return sb.toString();
 	}
 
@@ -97,6 +115,8 @@ public class AuthorizationHeader {
 		private String nonce;
 		private long ts;
 		private String ext;
+        private String app;
+        private String dlg;
 
 		private AuthorizationBuilder() {
 
@@ -110,6 +130,8 @@ public class AuthorizationHeader {
 			instance.ts = ts;
 			instance.nonce = nonce;
 			instance.ext = ext;
+            instance.app = app;
+            instance.dlg = dlg;
 
 			return instance;
 		}
@@ -143,6 +165,14 @@ public class AuthorizationHeader {
 			this.ext = ext;
 			return this;
 		}
+        public AuthorizationBuilder app(String app) {
+            this.app = app;
+            return this;
+        }
+        public AuthorizationBuilder dlg(String dlg) {
+            this.dlg = dlg;
+            return this;
+        }
 
 		@Override
 		public void scheme(String scheme) throws AuthHeaderParsingException {
@@ -180,6 +210,10 @@ public class AuthorizationHeader {
 				nonce(value);
 			} else if (key.equals("ext")) {
 				ext(value);
+            } else if (key.equals("app")) {
+                app(value);
+            } else if (key.equals("dlg")) {
+                dlg(value);
 			} else {
 				// Ignore unknown parameter
 			}
@@ -189,7 +223,7 @@ public class AuthorizationHeader {
 		@Override
 		public void token(String token) throws AuthHeaderParsingException {
 			throw new AuthHeaderParsingException(
-					"Token field not supported by Hawk authentication scheme");
+					"token68 field not supported by Hawk authentication scheme");
 		}
 
 	}

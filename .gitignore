@@ -9,3 +9,6 @@
 .project
 .settings
 doc
+.idea
+hawkj.iml
+target/

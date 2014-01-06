@@ -28,6 +28,14 @@ public class AuthorizationHeaderGenerationTest {
 		assertEquals("Hawk id=\"someId\",mac=\"o6jIkGcJhYFJWss5T5FJSHs7GJA2WjUQ/LEZOnUv/FE=\",ts=\"1\",nonce=\"abc\",ext=\"some-ext-app-data\"", h.toString());
 	}
 
+    @Test
+    public void testHeaderGenerationWithApp() throws HawkException {
+        HawkContext j = HawkContext.request("GET", "/foo", "example.com", 80).
+                credentials("someId", "someKey", Algorithm.SHA_256).tsAndNonce(1,"abc").app("myApp").build();
+        AuthorizationHeader h = j.createAuthorizationHeader();
+        assertEquals("Hawk id=\"someId\",mac=\"y+ktx5w5gxwRi4IzwptaDl79q0GG+fD4THhtaKTdZw4=\",ts=\"1\",nonce=\"abc\",app=\"myApp\"", h.toString());
+    }
+
 	@Test
 	public void testHeaderGenerationWithBodyHashing() throws HawkException {
 		HawkContext j = HawkContext.request("GET", "/foo", "example.com", 80).
