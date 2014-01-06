@@ -69,6 +69,32 @@ public class AuthorizationHeaderParsingTest {
         assertEquals("2D320BF8A5948601F9FA3FBA4800C8F7A1D203A317945330854D65228864468D" , h.getMac());
     }
 
+    @Test
+    public void parsingAndValidationSucceeds() throws HawkException, AuthHeaderParsingException {
+        String hv = "Hawk id=\"someId\",mac=\"y+ktx5w5gxwRi4IzwptaDl79q0GG+fD4THhtaKTdZw4=\",ts=\"1\",nonce=\"abc\",app=\"myApp\"";
+
+
+        AuthorizationHeader h;
+        h = AuthorizationHeader.authorization(hv);
+        HawkContext j = HawkContext.request("GET", "/foo", "example.com", 80).
+                credentials(h.getId(), "someKey", Algorithm.SHA_256).tsAndNonce(h.getTs(),h.getNonce()).app(h.getApp()).build();
+
+        assertEquals("someId" , h.getId());
+        assertEquals("myApp" , h.getApp());
+        assertEquals("y+ktx5w5gxwRi4IzwptaDl79q0GG+fD4THhtaKTdZw4=" , h.getMac());
+
+        assertTrue(j.isValidMac(h.getMac()));
+
+    }
+
+//    @Test
+//    public void testHeaderGenerationWithApp() throws HawkException {
+//        HawkContext j = HawkContext.request("GET", "/foo", "example.com", 80).
+//                credentials("someId", "someKey", Algorithm.SHA_256).tsAndNonce(1,"abc").app("myApp").build();
+//        AuthorizationHeader h = j.createAuthorizationHeader();
+//        assertEquals("Hawk id=\"someId\",mac=\"y+ktx5w5gxwRi4IzwptaDl79q0GG+fD4THhtaKTdZw4=\",ts=\"1\",nonce=\"abc\",app=\"myApp\"", h.toString());
+//    }
+
 
 
 

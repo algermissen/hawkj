@@ -14,7 +14,6 @@ public class JhawkBodyHashTest {
 	public void testBodyHashing() throws HawkException {
 		byte[] body = "This is a test body of some kind".getBytes(Charsets.UTF_8);
 		String hash64 = HawkContextBuilder.generateHash(Algorithm.SHA_256,body,"text/plain");
-		System.out.println("HASH" + hash64);
 		assertEquals("/CHyeMJ3XrecG754kxnsP1A8X3TY6VjYQD8eCI2wMm4=" , hash64);
 	}
 
