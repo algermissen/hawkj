@@ -91,7 +91,6 @@ public class AuthorizationHeader {
         }
         if (dlg != null) {
             sb.append(delim).append("dlg=\"").append(dlg).append(ESCDQUOTE);
-            delim = COMMA;
         }
 		return sb.toString();
 	}
